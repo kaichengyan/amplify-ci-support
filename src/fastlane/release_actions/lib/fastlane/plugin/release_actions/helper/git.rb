@@ -4,12 +4,9 @@ class Git
   SEPARATOR = "=====END====="
 
   def self.last_tag
-    command = %w(git describe --tag --long)
-    tag = run(command, 'Could not find tag from HEAD')
-
-    2.times { tag, = tag.rpartition('-') }
-
-    tag
+    command = %w(git tag)
+    tags = run(command, 'Could not list tags').chomp.gsub(/\s+/m, ' ').strip.split
+    tags.max_by { |tag| Version.from(tag) }
   end
 
   def self.last_release_tag
